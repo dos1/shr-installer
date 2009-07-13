@@ -215,7 +215,12 @@ class SHRInstallerGUI():
         print "..."
         self.installer = None
 
-    def dialog(self, msg, ok = True):
+    def dialogClose(self, dia, *args, **kwargs):
+        dia.delete()
+        if kwargs.get('button_callback'):
+            kwargs['button_callback']()
+
+    def dialog(self, msg, button = True, button_callback = None):
         dia = elementary.InnerWindow(self.win)
         dia.scale_set(1.2)
         txt = elementary.AnchorBlock(dia)
@@ -223,9 +228,24 @@ class SHRInstallerGUI():
         txt.show()
         fr = elementary.Frame(dia)
         fr.style_set('pad_medium')
+        fr.size_hint_weight_set(-1.0, -1.0)
+        fr.size_hint_align_set(-1.0, -1.0)
         fr.content_set(txt)
         fr.show()
-        dia.content_set(fr)
+        box = elementary.Box(dia)
+        box.show()
+        box.pack_start(fr)
+
+        if button:
+            btn = elementary.Button(dia)
+#            btn.size_hint_weight_set(1.0, 0.0)
+            btn.size_hint_align_set(-1.0, 0.0)
+            btn.label_set('OK')
+            btn.show()
+            btn.clicked = partial(self.dialogClose, dia, button_callback=button_callback)
+            box.pack_end(btn)
+
+        dia.content_set(box)
         dia.style_set("minimal_vertical")
         self.win.resize_object_add(dia)  
         dia.activate()
@@ -249,7 +269,7 @@ class SHRInstallerGUI():
 
     def connect(self, dia):
         if not self.installer.connect():
-            self.dialog("Could not connect to PackageKit. Aborting.")
+            self.dialog("Could not connect to PackageKit. Aborting.", True, self.destroy)
         dia.delete()
         self.bar.push('Options', 'Quit', self.options, self.destroy)
         return False
