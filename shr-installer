@@ -4,6 +4,7 @@
 import dbus, e_dbus
 import elementary, ecore
 from functools import partial
+from sys import argv
 
 mainloop = e_dbus.DBusEcoreMainLoop()
 bus = dbus.SystemBus(mainloop=mainloop)
@@ -22,6 +23,10 @@ def dbus_err(x, *args, **kwargs):
 class SHRInstaller():
 
     packagekit = None
+    conf = None
+
+    def __init__(self, debug=False):
+        self.conf = {'shutdown-pk-on-exit':not(debug)} # FIXME
 
     def connect(self):
         if not self.packagekit:
@@ -51,8 +56,9 @@ class SHRInstaller():
 
     def __del__(self):
         if self.packagekit:
-            print "Bye PackageKit!"
-            self.packagekit.SuggestDaemonQuit()
+            if self.conf['shutdown-pk-on-exit']:
+                print "Bye PackageKit!"
+                self.packagekit.SuggestDaemonQuit()
         print "Bye!"
 
     def cancel(self, transaction):
@@ -404,7 +410,7 @@ class SHRInstallerGUI():
         self.win.show()
 
 if __name__ == "__main__":
-    ui = SHRInstallerGUI(SHRInstaller())
+    ui = SHRInstallerGUI(SHRInstaller(len(argv)==2))
     ui.main()
 
     ui.run()
