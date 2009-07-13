@@ -221,44 +221,54 @@ class SHRInstallerGUI():
         print "..."
         self.installer = None
 
-    def dialogClose(self, dia, *args, **kwargs):
-        dia.delete()
-        if kwargs.get('button_callback'):
-            kwargs['button_callback']()
+    class Dialog(elementary.InnerWindow):
+        callback = None
+        active = None
 
-    def dialog(self, msg, *args, **kwargs):
-        button = kwargs.get('button')
-        button_callback = kwargs.get('button_callback')
+        def close(self, *args, **kwargs):
+            if self.active:
+                self.delete()
+                if self.callback:
+                    self.callback()
+                self.active = False
 
-        dia = elementary.InnerWindow(self.win)
-        dia.scale_set(1.2)
-        txt = elementary.AnchorBlock(dia)
-        txt.text_set(msg)
-        txt.show()
-        fr = elementary.Frame(dia)
-        fr.style_set('pad_medium')
-        fr.size_hint_weight_set(-1.0, -1.0)
-        fr.size_hint_align_set(-1.0, -1.0)
-        fr.content_set(txt)
-        fr.show()
-        box = elementary.Box(dia)
-        box.show()
-        box.pack_start(fr)
+        def __del__(self):
+            self.close()
 
-        if button:
-            btn = elementary.Button(dia)
-#            btn.size_hint_weight_set(1.0, 0.0)
-            btn.size_hint_align_set(-1.0, 0.0)
-            btn.label_set('OK')
-            btn.show()
-            btn.clicked = partial(self.dialogClose, dia, button_callback=button_callback)
-            box.pack_end(btn)
+        def __init__(self, win, msg, *args, **kwargs):
 
-        dia.content_set(box)
-        dia.style_set("minimal_vertical")
-        self.win.resize_object_add(dia)  
-        dia.activate()
-        return dia
+            super(SHRInstallerGUI.Dialog, self).__init__(win)
+            button = kwargs.get('button')
+            self.callback = kwargs.get('button_callback')
+            self.active = True
+
+            self.scale_set(1.2)
+            txt = elementary.AnchorBlock(self)
+            txt.text_set(msg)
+            txt.show()
+            fr = elementary.Frame(self)
+            fr.style_set('pad_medium')
+            fr.size_hint_weight_set(-1.0, -1.0)
+            fr.size_hint_align_set(-1.0, -1.0)
+            fr.content_set(txt)
+            fr.show()
+            box = elementary.Box(self)
+            box.show()
+            box.pack_start(fr)
+
+            if button:
+                btn = elementary.Button(self)
+#                btn.size_hint_weight_set(1.0, 0.0)
+                btn.size_hint_align_set(-1.0, 0.0)
+                btn.label_set('OK')
+                btn.show()
+                btn.clicked = self.close
+                box.pack_end(btn)
+
+            self.content_set(box)
+            self.style_set("minimal_vertical")
+            win.resize_object_add(self)
+            self.activate()
 
     def destroy(self, *args, **kwargs):
         elementary.exit()
@@ -278,8 +288,8 @@ class SHRInstallerGUI():
 
     def connect(self, dia):
         if not self.installer.connect():
-            self.dialog("Could not connect to PackageKit. Aborting.", button=True, button_callback=self.destroy)
-        dia.delete()
+            self.Dialog(self.win, "Could not connect to PackageKit. Aborting.", button=True, button_callback=self.destroy)
+        dia.close()
         self.bar.push('Options', 'Quit', self.options, self.destroy)
         return False
 
@@ -370,10 +380,10 @@ class SHRInstallerGUI():
         box.pack_end(list)
         box.show()
 
-        items = [('Install new packages',None, None, partial(self.dialog,'Not implemented yet.', button=True)),
-                 ('Upgrade system', None, None, partial(self.dialog,'Not implemented yet.', button=True)),
+        items = [('Install new packages',None, None, partial(self.Dialog,self.win,'Not implemented yet.', button=True)),
+                 ('Upgrade system', None, None, partial(self.Dialog,self.win,'Not implemented yet.', button=True)),
                  ('Update package cache', None, None, self.update),
-                 ('Remove packages', None, None, partial(self.dialog,'Not implemented yet.', button=True))]
+                 ('Remove packages', None, None, partial(self.Dialog,self.win,'Not implemented yet.', button=True))]
 
         for item in items:
             list.item_append(item[0], item[1], item[2], item[3])
@@ -403,7 +413,7 @@ class SHRInstallerGUI():
         self.win.resize_object_add(box)
         self.menu()
 
-        inwin = self.dialog('Connecting to PackageKit...')
+        inwin = self.Dialog(self.win, 'Connecting to PackageKit...')
 
         ecore.idler_add(partial(self.connect, inwin))
 
