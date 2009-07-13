@@ -29,7 +29,12 @@ class SHRInstaller():
                 self.packagekit = getDbusObject (bus, 'org.freedesktop.PackageKit' , '/org/freedesktop/PackageKit', 'org.freedesktop.PackageKit')
             except:
                 print "Trying again..."
-                self.packagekit = getDbusObject (bus, 'org.freedesktop.PackageKit' , '/org/freedesktop/PackageKit', 'org.freedesktop.PackageKit')
+                try:
+                    self.packagekit = getDbusObject (bus, 'org.freedesktop.PackageKit' , '/org/freedesktop/PackageKit', 'org.freedesktop.PackageKit')
+                except:
+                    print "Couldn't connect to PackageKit"
+                    return False
+        return True
 
     def checkConnection(self):
         if not self.packagekit:
@@ -244,7 +249,8 @@ class SHRInstallerGUI():
         self.bar.push('About', 'Back', self.about, self.back)
 
     def connect(self, dia):
-        self.installer.connect()
+        if not self.installer.connect():
+            self.dialog("Could not connect to PackageKit. Aborting.")
         dia.delete()
         self.bar.push('Options', 'Quit', self.options, self.destroy)
         return False
