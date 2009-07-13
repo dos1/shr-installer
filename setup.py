@@ -20,7 +20,7 @@ dist = setup( name='shr-installer',
     license='GNU GPL',
     scripts=['shr-installer'],
     data_files=[('pixmaps/shr-installer' , glob("data/icons/*.png")),
-                ('applications', ['shr-installer.desktop'])]
+                ('applications', ['data/shr-installer.desktop'])]
 )
 
 installCmd = dist.get_command_obj(command="install_data")
