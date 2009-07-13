@@ -6,16 +6,13 @@ import elementary, ecore
 from functools import partial
 from sys import argv
 
-mainloop = e_dbus.DBusEcoreMainLoop()
-bus = dbus.SystemBus(mainloop=mainloop)
-
 # define some nice dbus helper, which I really like, cause make code easier to read :)
 def getDbusObject (bus, busname , objectpath , interface):
         dbusObject = bus.get_object(busname, objectpath)
         return dbus.Interface(dbusObject, dbus_interface=interface)
 
 def dbus_ok(*args, **kwargs):
-    print "dbus callback ok"
+    pass
 
 def dbus_err(x, *args, **kwargs):
     print "dbus callback error: " + str(x)
@@ -24,18 +21,20 @@ class SHRInstaller():
 
     packagekit = None
     conf = None
+    bus = None
 
-    def __init__(self, debug=False):
+    def __init__(self, bus, debug=False):
+        self.bus = bus
         self.conf = {'shutdown-pk-on-exit':not(debug)} # FIXME
 
     def connect(self):
         if not self.packagekit:
             try:
-                self.packagekit = getDbusObject (bus, 'org.freedesktop.PackageKit' , '/org/freedesktop/PackageKit', 'org.freedesktop.PackageKit')
+                self.packagekit = getDbusObject (self.bus, 'org.freedesktop.PackageKit' , '/org/freedesktop/PackageKit', 'org.freedesktop.PackageKit')
             except:
                 print "Trying again..."
                 try:
-                    self.packagekit = getDbusObject (bus, 'org.freedesktop.PackageKit' , '/org/freedesktop/PackageKit', 'org.freedesktop.PackageKit')
+                    self.packagekit = getDbusObject (self.bus, 'org.freedesktop.PackageKit' , '/org/freedesktop/PackageKit', 'org.freedesktop.PackageKit')
                 except:
                     print "Couldn't connect to PackageKit"
                     return False
@@ -52,7 +51,7 @@ class SHRInstaller():
         self.checkConnection()
         if not tid:
             tid = self.getTid()
-        return getDbusObject (bus, 'org.freedesktop.PackageKit' , tid, 'org.freedesktop.PackageKit.Transaction')
+        return getDbusObject (self.bus, 'org.freedesktop.PackageKit' , tid, 'org.freedesktop.PackageKit.Transaction')
 
     def __del__(self):
         if self.packagekit:
@@ -70,12 +69,9 @@ class SHRInstaller():
         tid = self.getTid()
         trans = self.transaction(tid)
         trans.RefreshCache(True, reply_handler=dbus_ok, error_handler=dbus_err)
-#        print args
-#        print kwargs
         if kwargs.get('finished_handler'):
             trans.connect_to_signal('Finished', kwargs['finished_handler'])
         if kwargs.get('progress_handler'):
-            print kwargs['progress_handler']
             trans.connect_to_signal('ProgressChanged', kwargs['progress_handler'])
         return trans
 
@@ -158,12 +154,9 @@ class SHRInstallerGUI():
             self.update()
 
         def update(self):
-            try:
+            if self.btn1 and self.btn2:
                 self.btn1.delete()
                 self.btn2.delete()
-            except:
-                print "DEBUG: Bar delete"
-
 
             (btn1l, btn2l, btn1c, btn2c) = self.bars[len(self.bars)-1]
             self.btn1 = self.item(btn1l, btn1c)
@@ -177,9 +170,12 @@ class SHRInstallerGUI():
     pager = None
     bar = None
     animstep = None
+    bus = None
 
     def __init__(self, installer):
-        self.installer = installer
+        mainloop = e_dbus.DBusEcoreMainLoop()
+        self.bus = dbus.SystemBus(mainloop=mainloop)
+        self.installer = installer(self.bus, len(argv)==2) # FIXME
         elementary.init()  
         # elementary configuration
         elementary.c_elementary.finger_size_set(95)
@@ -238,6 +234,7 @@ class SHRInstallerGUI():
         def __init__(self, win, msg, *args, **kwargs):
 
             super(SHRInstallerGUI.Dialog, self).__init__(win)
+
             button = kwargs.get('button')
             self.callback = kwargs.get('button_callback')
             self.active = True
@@ -420,7 +417,10 @@ class SHRInstallerGUI():
         self.win.show()
 
 if __name__ == "__main__":
-    ui = SHRInstallerGUI(SHRInstaller(len(argv)==2))
+
+    print "SHR Installer"
+
+    ui = SHRInstallerGUI(SHRInstaller)
     ui.main()
 
     ui.run()
