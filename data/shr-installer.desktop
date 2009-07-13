@@ -1,0 +1,15 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=Installer
+Name[pl]=Instalator
+TryExec=shr-installer
+GenericName=SHR Installer
+Comment=python-elementary and PackageKit based installer for SHR systems
+Comment[pl]=Instalator dla systemów SHR, oparty na python-elementary i PackageKit
+StartupNotify=true
+Exec=shr-installer
+Terminal=false
+Type=Application
+Categories=Settings;
+Icon=shr-installer.png

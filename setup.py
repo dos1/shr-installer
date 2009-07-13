@@ -19,7 +19,8 @@ dist = setup( name='shr-installer',
     download_url='git://git.shr-project.org/repo/shr-installer.git',
     license='GNU GPL',
     scripts=['shr-installer'],
-    data_files=[('pixmaps/shr-installer' , glob("data/icons/*.png"))]
+    data_files=[('pixmaps/shr-installer' , glob("data/icons/*.png")),
+                ('applications', ['shr-installer.desktop'])]
 )
 
 installCmd = dist.get_command_obj(command="install_data")
