@@ -220,7 +220,10 @@ class SHRInstallerGUI():
         if kwargs.get('button_callback'):
             kwargs['button_callback']()
 
-    def dialog(self, msg, button = True, button_callback = None):
+    def dialog(self, msg, *args, **kwargs):
+        button = kwargs.get('button')
+        button_callback = kwargs.get('button_callback')
+
         dia = elementary.InnerWindow(self.win)
         dia.scale_set(1.2)
         txt = elementary.AnchorBlock(dia)
@@ -269,7 +272,7 @@ class SHRInstallerGUI():
 
     def connect(self, dia):
         if not self.installer.connect():
-            self.dialog("Could not connect to PackageKit. Aborting.", True, self.destroy)
+            self.dialog("Could not connect to PackageKit. Aborting.", button=True, button_callback=self.destroy)
         dia.delete()
         self.bar.push('Options', 'Quit', self.options, self.destroy)
         return False
@@ -361,10 +364,10 @@ class SHRInstallerGUI():
         box.pack_end(list)
         box.show()
 
-        items = [('Install new packages',None, None, None),
-                 ('Upgrade system', None, None, None),
+        items = [('Install new packages',None, None, partial(self.dialog,'Not implemented yet.', button=True)),
+                 ('Upgrade system', None, None, partial(self.dialog,'Not implemented yet.', button=True)),
                  ('Update package cache', None, None, self.update),
-                 ('Remove packages', None, None, None)]
+                 ('Remove packages', None, None, partial(self.dialog,'Not implemented yet.', button=True))]
 
         for item in items:
             list.item_append(item[0], item[1], item[2], item[3])
@@ -394,7 +397,7 @@ class SHRInstallerGUI():
         self.win.resize_object_add(box)
         self.menu()
 
-        inwin = self.dialog('Connecting to PackageKit...', False)
+        inwin = self.dialog('Connecting to PackageKit...')
 
         ecore.idler_add(partial(self.connect, inwin))
 
