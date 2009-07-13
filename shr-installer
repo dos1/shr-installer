@@ -355,7 +355,7 @@ class SHRInstallerGUI():
         list.go()
 
     def main(self):
-        self.win.title_set('SHR Installer')
+        self.win.title_set('Installer')
         self.win.destroy = self.destroy
         bg = elementary.Background(self.win)
         self.win.resize_object_add(bg)
