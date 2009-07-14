@@ -122,6 +122,25 @@ class SHRInstaller():
             trans.connect_to_signal('Package', kwargs['package_handler'])
         return trans
 
+    def installPackages(self, packages, *args, **kwargs):
+        self.checkConnection()
+        tid = self.getTid()
+        trans = self.transaction(tid)
+        dok = kwargs.get('reply_handler')
+        if not dok:
+            dok = dbus_ok
+        derr = kwargs.get('error_handler')
+        if not derr:
+            derr = dbus_err
+        trans.InstallPackages(packages, reply_handler=dok, error_handler=derr)
+        if kwargs.get('finished_handler'):
+            trans.connect_to_signal('Finished', kwargs['finished_handler'])
+        if kwargs.get('progress_handler'):
+            trans.connect_to_signal('ProgressChanged', kwargs['progress_handler'])
+        if kwargs.get('package_handler'):
+            trans.connect_to_signal('Package', kwargs['package_handler'])
+        return trans
+
     def removePackages(self, packages, *args, **kwargs):
         self.checkConnection()
         tid = self.getTid()
@@ -432,6 +451,44 @@ class SHRInstallerGUI():
         self.back()
         self.back()
 
+    def installSelected(self, togglelist, *args, **kwargs):
+        toremove = []
+        for info in togglelist:
+            if togglelist[info].state_get():
+                toremove.append(info)
+
+        box = elementary.Box(self.pager)
+        box.show()
+
+        animbox = elementary.Box(box)
+        animbox.horizontal_set(1)
+        animbox.show()
+
+        la = elementary.Label(animbox)
+        la.label_set('Installing selected packages')
+        la.show()
+
+        animbox.pack_start(la)
+
+        box.pack_start(animbox)
+
+        lab = elementary.Label(box)
+        lab.show()
+        box.pack_end(lab)
+        lab.scale_set(6.0)
+
+        pkglab = elementary.Label(box)
+        pkglab.show()
+        box.pack_end(pkglab)
+
+        self.installer.installPackages(toremove, package_handler=partial(self.labelPackage, pkglab, True), finished_handler=partial(self.labelFinished, lab, pkglab), progress_handler=partial(self.labelProgress, lab))
+
+        self.pager.content_push(box)
+        self.startAnimation(animbox)
+        self.bar.push('Next', 'Back', None, self.back2)
+        self.bar.push('Next', 'Cancel', None, None)
+
+
     def removeSelected(self, togglelist, *args, **kwargs):
         toremove = []
         for info in togglelist:
@@ -474,12 +531,25 @@ class SHRInstallerGUI():
         list.show()
         togglelist = {}
         list.go()
-        #self.installer.listPackages('available', 'opi', package_handler=partial(self.handlePackage, list, togglelist, self.installSelected))
-        self.Dialog(self.win, 'Not implemented yet.', button=True)
+        entryscr = elementary.Scroller(self.pager)
+        entryscr.content_min_limit(0,1)
+        entryscr.bounce_set(0, 0)
+        entryscr.policy_set(elementary.ELM_SCROLLER_POLICY_OFF, elementary.ELM_SCROLLER_POLICY_OFF)
+        entryscr.size_hint_weight_set(1.0, 0.0)
+        entryscr.size_hint_align_set(-1.0, -1.0)
+        entry = elementary.Entry(self.pager)
+        entry.show()
+        entry.size_hint_weight_set(1.0, 0.0)
+        entry.size_hint_align_set(-1.0, -1.0)
+        entry.single_line_set(True)
+        entry.scale_set(3.0)
+        entryscr.content_set(entry)
+        
+        self.Dialog(self.win, 'Enter package name:', widgets=[entryscr], button=True, button_callback=partial(self.installList, list, togglelist, entry))
         self.pager.content_push(list)
         self.bar.push('Next', 'Back', None, self.back)
 
-    def removeListError(self, dia, x, *args, **kwargs):
+    def listError(self, dia, x, *args, **kwargs):
         anchor = elementary.AnchorView(self.win)
         anchor.size_hint_weight_set(1.0, 1.0)
         anchor.size_hint_align_set(-1.0, -1.0)
@@ -488,14 +558,18 @@ class SHRInstallerGUI():
         dia.delete()
         self.Dialog(self.win, 'Error: ', widgets=[anchor], without_minimal=True, button=True, button_callback=self.back)
 
-    def removeListFinished(self, dia, status, *args, **kwargs):
+    def listFinished(self, dia, status, *args, **kwargs):
         dia.delete()
         if status != 'success':
             self.Dialog(self.win, 'Searching failed.', button=True, button_callback = self.back)
 
     def removeList(self, list, togglelist, entry, *args, **kwargs):
         dia = self.Dialog(self.win, 'Searching...')
-        self.installer.listPackages('installed', entry.entry_get().replace('<br>',''), package_handler=partial(self.handlePackage, list, togglelist, self.removeSelected), finished_handler=partial(self.removeListFinished, dia), error_handler=partial(self.removeListError, dia))
+        self.installer.listPackages('installed', entry.entry_get().replace('<br>',''), package_handler=partial(self.handlePackage, list, togglelist, self.removeSelected), finished_handler=partial(self.listFinished, dia), error_handler=partial(self.listError, dia))
+
+    def installList(self, list, togglelist, entry, *args, **kwargs):
+        dia = self.Dialog(self.win, 'Searching...')
+        self.installer.listPackages('~installed', entry.entry_get().replace('<br>',''), package_handler=partial(self.handlePackage, list, togglelist, self.installSelected), finished_handler=partial(self.listFinished, dia), error_handler=partial(self.listError, dia))
 
     def remove(self, *args, **kwargs):
         list = elementary.List(self.pager)
