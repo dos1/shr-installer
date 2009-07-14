@@ -75,6 +75,19 @@ class SHRInstaller():
             trans.connect_to_signal('ProgressChanged', kwargs['progress_handler'])
         return trans
 
+    def listUpgradable(self, *args, **kwargs):
+        self.checkConnection()
+        tid = self.getTid()
+        trans = self.transaction(tid)
+        trans.GetUpdates('installed', reply_handler=dbus_ok, error_handler=dbus_err)
+        if kwargs.get('finished_handler'):
+            trans.connect_to_signal('Finished', kwargs['finished_handler'])
+        if kwargs.get('progress_handler'):
+            trans.connect_to_signal('ProgressChanged', kwargs['progress_handler'])
+        if kwargs.get('package_handler'):
+            trans.connect_to_signal('Package', kwargs['package_handler'])
+        return trans
+
 
     def search(self, name):
         self.checkConnection()
@@ -310,6 +323,24 @@ class SHRInstallerGUI():
         self.installer.cancel(transaction)
         self.bar.pop()
 
+    def handlePackage(self, list, togglelist, status, info, desc, *args, **kwargs):
+        toggle = elementary.Check(list)
+        toggle.show()
+        togglelist[info] = toggle
+        (name, version, arch, empty) = info.split(';')
+        list.item_append(name, toggle, None, None)
+        list.go()
+
+    def upgrade(self, *args, **kwargs):
+        list = elementary.List(self.pager)
+        list.show()
+        togglelist = {}
+        list.go()
+#        self.installer.listUpgradable(package_handler=partial(self.handlePackage, list, togglelist))
+        self.Dialog(self.win, 'Not implemented yet', button=True, button_callback = self.back)
+        self.pager.content_push(list)
+        self.bar.push('Next', 'Back', None, self.back)  
+
     def update(self, *args, **kwargs):
         box = elementary.Box(self.pager)
         box.show()
@@ -378,7 +409,7 @@ class SHRInstallerGUI():
         box.show()
 
         items = [('Install new packages',None, None, partial(self.Dialog,self.win,'Not implemented yet.', button=True)),
-                 ('Upgrade system', None, None, partial(self.Dialog,self.win,'Not implemented yet.', button=True)),
+                 ('Upgrade system', None, None, self.upgrade),
                  ('Update package cache', None, None, self.update),
                  ('Remove packages', None, None, partial(self.Dialog,self.win,'Not implemented yet.', button=True))]
 
