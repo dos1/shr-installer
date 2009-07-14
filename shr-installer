@@ -388,8 +388,9 @@ class SHRInstallerGUI():
         else:
             lab.label_set('???')
             print status
+        lab.color_set(0, 0, 0, 255)
         if pkglab:
-           pkglab.delete()
+           pkglab.label_set('')
         self.stopAnimation()
         self.bar.pop()
 
@@ -550,13 +551,22 @@ class SHRInstallerGUI():
         self.bar.push('Next', 'Back', None, self.back)
 
     def listError(self, dia, x, *args, **kwargs):
-        anchor = elementary.AnchorView(self.win)
-        anchor.size_hint_weight_set(1.0, 1.0)
+        scr = elementary.Scroller(self.win)
+        scr.content_min_limit(0,1)
+        scr.bounce_set(0, 0)
+        scr.policy_set(elementary.ELM_SCROLLER_POLICY_OFF, elementary.ELM_SCROLLER_POLICY_OFF)
+        scr.size_hint_weight_set(1.0, 0.0)
+        scr.size_hint_align_set(-1.0, -1.0)
+
+        anchor = elementary.AnchorBlock(self.win)
+        anchor.size_hint_weight_set(1.0, 0.0)
         anchor.size_hint_align_set(-1.0, -1.0)
         anchor.text_set(str(x))
+        scr.content_set(anchor)
+        scr.show()
         anchor.show()
         dia.delete()
-        self.Dialog(self.win, 'Error: ', widgets=[anchor], without_minimal=True, button=True, button_callback=self.back)
+        self.Dialog(self.win, 'Error: ', widgets=[scr],	button=True, button_callback=self.back)
 
     def listFinished(self, dia, status, *args, **kwargs):
         dia.delete()
