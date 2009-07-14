@@ -79,7 +79,7 @@ class SHRInstaller():
         self.checkConnection()
         tid = self.getTid()
         trans = self.transaction(tid)
-        trans.GetUpdates('installed', reply_handler=dbus_ok, error_handler=dbus_err)
+        trans.GetUpdates('all', reply_handler=dbus_ok, error_handler=dbus_err)
         if kwargs.get('finished_handler'):
             trans.connect_to_signal('Finished', kwargs['finished_handler'])
         if kwargs.get('progress_handler'):
@@ -89,9 +89,19 @@ class SHRInstaller():
         return trans
 
 
-    def search(self, name):
+    def listPackages(self, status, pattern, *args, **kwargs):
         self.checkConnection()
-        self.transaction().SearchName('all', name, reply_handler=dbus_ok, error_handler=dbus_err)
+        tid = self.getTid()
+        trans = self.transaction(tid)
+        trans.SearchName(status, pattern, reply_handler=dbus_ok, error_handler=dbus_err)
+        if kwargs.get('finished_handler'):
+            trans.connect_to_signal('Finished', kwargs['finished_handler'])
+        if kwargs.get('progress_handler'):
+            trans.connect_to_signal('ProgressChanged', kwargs['progress_handler'])
+        if kwargs.get('package_handler'):
+            trans.connect_to_signal('Package', kwargs['package_handler'])
+        return trans
+
 
 class SHRInstallerGUI():
 
@@ -331,6 +341,16 @@ class SHRInstallerGUI():
         list.item_append(name, toggle, None, None)
         list.go()
 
+    def install(self, *args, **kwargs):
+        list = elementary.List(self.pager)
+        list.show()
+        togglelist = {}
+        list.go()
+#        self.installer.listPackages('not installed', 'opi', package_handler=partial(self.handlePackage, list, togglelist))
+        self.Dialog(self.win, 'Not implemented yet', button=True)
+        self.pager.content_push(list)
+        self.bar.push('Next', 'Back', None, self.back)
+
     def upgrade(self, *args, **kwargs):
         list = elementary.List(self.pager)
         list.show()
@@ -408,7 +428,7 @@ class SHRInstallerGUI():
         box.pack_end(list)
         box.show()
 
-        items = [('Install new packages',None, None, partial(self.Dialog,self.win,'Not implemented yet.', button=True)),
+        items = [('Install new packages',None, None, self.install),
                  ('Upgrade system', None, None, self.upgrade),
                  ('Update package cache', None, None, self.update),
                  ('Remove packages', None, None, partial(self.Dialog,self.win,'Not implemented yet.', button=True))]
