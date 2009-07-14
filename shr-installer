@@ -453,10 +453,13 @@ class SHRInstallerGUI():
         self.back()
 
     def installSelected(self, togglelist, *args, **kwargs):
-        toremove = []
+        toinstall = []
+
         for info in togglelist:
             if togglelist[info].state_get():
-                toremove.append(info)
+                toinstall.append(info)
+
+        togglelist = {}
 
         box = elementary.Box(self.pager)
         box.show()
@@ -482,7 +485,7 @@ class SHRInstallerGUI():
         pkglab.show()
         box.pack_end(pkglab)
 
-        self.installer.installPackages(toremove, package_handler=partial(self.labelPackage, pkglab, True), finished_handler=partial(self.labelFinished, lab, pkglab), progress_handler=partial(self.labelProgress, lab))
+        self.installer.installPackages(toinstall, package_handler=partial(self.labelPackage, pkglab, True), finished_handler=partial(self.labelFinished, lab, pkglab), progress_handler=partial(self.labelProgress, lab))
 
         self.pager.content_push(box)
         self.startAnimation(animbox)
@@ -492,9 +495,12 @@ class SHRInstallerGUI():
 
     def removeSelected(self, togglelist, *args, **kwargs):
         toremove = []
+
         for info in togglelist:
             if togglelist[info].state_get():
                 toremove.append(info)
+
+        togglelist = {} 
 
         box = elementary.Box(self.pager)
         box.show()
@@ -547,6 +553,7 @@ class SHRInstallerGUI():
         entryscr.content_set(entry)
         
         self.Dialog(self.win, 'Enter package name:', widgets=[entryscr], button=True, button_callback=partial(self.installList, list, togglelist, entry))
+        #entry.focus()
         self.pager.content_push(list)
         self.bar.push('Next', 'Back', None, self.back)
 
