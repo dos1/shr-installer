@@ -1,1 +1,6 @@
-Almost anything ;)
+* work with PolicyKit
+* upgrading
+
+Bugs in opkg PackageKit backend to fix:
+* upgrading
+* installing/removing multiple packages at once
