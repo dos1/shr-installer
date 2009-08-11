@@ -617,12 +617,15 @@ class SHRInstallerGUI():
         self.pager.content_push(list)
         self.bar.push('Next', 'Back', None, self.back)
 
+    def upgradeSelected(self, *args, **kwargs):
+        pass
+
     def upgrade(self, *args, **kwargs):
         list = elementary.List(self.pager)
         list.show()
         togglelist = {}
         list.go()
-#        self.installer.listUpgradable(package_handler=partial(self.handlePackage, list, togglelist))
+#        self.installer.listUpgradable(package_handler=partial(self.handlePackage, list, togglelist, self.upgradeSelected))
         self.Dialog(self.win, 'Not implemented yet.', button=True, button_callback = self.back)
         self.pager.content_push(list)
         self.bar.push('Next', 'Back', None, self.back)  
