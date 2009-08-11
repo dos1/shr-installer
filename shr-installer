@@ -132,7 +132,7 @@ class SHRInstaller():
         derr = kwargs.get('error_handler')
         if not derr:
             derr = dbus_err
-        trans.InstallPackages(packages, reply_handler=dok, error_handler=derr)
+        trans.InstallPackages(False, packages, reply_handler=dok, error_handler=derr)
         if kwargs.get('finished_handler'):
             trans.connect_to_signal('Finished', kwargs['finished_handler'])
         if kwargs.get('progress_handler'):
@@ -390,14 +390,20 @@ class SHRInstallerGUI():
             print status
         lab.color_set(0, 0, 0, 255)
         if pkglab:
-           pkglab.label_set('')
+            pkglab.label_set('')
+        if kwargs.get('remaining'):
+            kwargs['remaining'].label_set('')
         self.stopAnimation()
         self.bar.pop()
 
-    def labelProgress(self, lab, pro, *args, **kwargs):
+    def labelProgress(self, lab, pro, subpro, elapsed, remain, *args, **kwargs):
         if pro!=101:
             lab.label_set(str(pro) + '%')
             lab.color_set(0, 0, 0, (pro*2)+55 )
+        #print str(remain) + ' seconds left'
+        if kwargs.get('remaining'):
+            if remain!=0 or pro==100:
+                kwargs['remaining'].label_set(str(remain) + ' seconds left')
 
     def cancel(self, transaction, *args, **kwargs):
         self.installer.cancel(transaction)
@@ -641,6 +647,10 @@ class SHRInstallerGUI():
         lab.show()
         box.pack_end(lab)
         lab.scale_set(6.0)
+
+#        remaining = elementary.Label(box)
+#        remaining.show()
+#        box.pack_end(remaining)
 
         trans = self.installer.update(finished_handler=partial(self.labelFinished, lab, None), progress_handler=partial(self.labelProgress, lab))
         self.pager.content_push(box)
