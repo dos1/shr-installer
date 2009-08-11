@@ -388,7 +388,7 @@ class SHRInstallerGUI():
         else:
             lab.label_set('???')
             print status
-        lab.color_set(0, 0, 0, 255)
+        lab.color_set(255, 255, 255, 255)
         if pkglab:
             pkglab.label_set('')
         if kwargs.get('remaining'):
@@ -399,7 +399,7 @@ class SHRInstallerGUI():
     def labelProgress(self, lab, pro, subpro, elapsed, remain, *args, **kwargs):
         if pro!=101:
             lab.label_set(str(pro) + '%')
-            lab.color_set(0, 0, 0, (pro*2)+55 )
+            lab.color_set(255, 255, 255, (pro*2)+55 )
         #print str(remain) + ' seconds left'
         if kwargs.get('remaining'):
             if remain!=0 or pro==100:
