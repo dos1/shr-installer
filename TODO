@@ -1,5 +1,5 @@
-* work with PolicyKit
 * upgrading
+* don't display upgradable packages in "Install new packages" view
 
 Bugs in opkg PackageKit backend to fix:
 * upgrading
