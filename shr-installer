@@ -682,7 +682,7 @@ class SHRInstallerGUI():
         box = elementary.Box(self.pager)
         fr = elementary.Frame(box)
         lab = elementary.Label(fr)#change to AnchorBlock
-        lab.label_set('What do you want to do today?')
+        lab.label_set('Select action from list below:')
 
         lab.show()
         labox = elementary.Box(fr)
