@@ -12,4 +12,4 @@ Exec=shr-installer
 Terminal=false
 Type=Application
 Categories=Settings;
-Icon=shr-installer.png
+Icon=shr-installer
