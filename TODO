@@ -1,5 +1,6 @@
 * upgrading
 * don't display upgradable packages in "Install new packages" view
+* look at integrating with webservices about package rating, categories, screenshots and descriptions
 
 Bugs in opkg PackageKit backend to fix:
 * upgrading
