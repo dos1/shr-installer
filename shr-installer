@@ -176,6 +176,7 @@ class SHRInstallerGUI():
             self.bars = []
 
             self.horizontal_set(1)
+            self.homogenous_set(1)
             #self.pack_end(elementary.Button(self))
             self.box1 = elementary.Frame(self)
             self.box2 = elementary.Frame(self)
