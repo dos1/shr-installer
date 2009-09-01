@@ -3,9 +3,15 @@
 
 import dbus, e_dbus
 import elementary, ecore
+import gettext
 from functools import partial
 from sys import argv
 
+try:
+	cat = gettext.Catalog("shr-installer")
+	_ = cat.gettext
+except IOError:
+	_ = lambda x: x
 # define some nice dbus helper, which I really like, cause make code easier to read :)
 def getDbusObject (bus, busname , objectpath , interface):
         dbusObject = bus.get_object(busname, objectpath)
@@ -32,17 +38,17 @@ class SHRInstaller():
             try:
                 self.packagekit = getDbusObject (self.bus, 'org.freedesktop.PackageKit' , '/org/freedesktop/PackageKit', 'org.freedesktop.PackageKit')
             except:
-                print "Trying again..."
+                print _("Trying again...")
                 try:
                     self.packagekit = getDbusObject (self.bus, 'org.freedesktop.PackageKit' , '/org/freedesktop/PackageKit', 'org.freedesktop.PackageKit')
                 except:
-                    print "Couldn't connect to PackageKit"
+                    print _("Couldn't connect to PackageKit")
                     return False
         return True
 
     def checkConnection(self):
         if not self.packagekit:
-            raise(IOError('Not connected to PackageKit!'))
+            raise(IOError(_("Not connected to PackageKit!")))
 
     def getTid(self):
         return self.packagekit.GetTid()
@@ -56,9 +62,9 @@ class SHRInstaller():
     def __del__(self):
         if self.packagekit:
             if self.conf['shutdown-pk-on-exit']:
-                print "Bye PackageKit!"
+                print _("Bye PackageKit!")
                 self.packagekit.SuggestDaemonQuit()
-        print "Bye!"
+        print _("Bye!")
 
     def cancel(self, transaction):
         self.checkConnection()
@@ -227,7 +233,7 @@ class SHRInstallerGUI():
             return btn
 
 
-        def push(self, btn1l = "Next", btn2l = "Back", btn1c = None, btn2c = None):
+        def push(self, btn1l = _("Next"), btn2l = _("Back"), btn1c = None, btn2c = None):
             self.bars.append((btn1l, btn2l, btn1c, btn2c))
             self.update()
 
@@ -366,28 +372,28 @@ class SHRInstallerGUI():
         scr.show()
         box = elementary.Box(scr)
         label = elementary.Label(box)
-        label.label_set('Options')
+        label.label_set(_("Options"))
         label.show()
         box.pack_end(label)
         box.show()
         scr.content_set(box)
         self.pager.content_push(scr)
-        self.bar.push('About', 'Back', self.about, self.back)
+        self.bar.push(_("About"), _("Back"), self.about, self.back)
 
     def connect(self, dia):
         if not self.installer.connect():
-            self.Dialog(self.win, "Could not connect to PackageKit. Aborting.", button=True, button_callback=self.destroy)
+            self.Dialog(self.win, _("Could not connect to PackageKit. Aborting."), button=True, button_callback=self.destroy)
         dia.close()
-        self.bar.push('Options', 'Quit', self.options, self.destroy)
+        self.bar.push(_("Options"), _("Quit"), self.options, self.destroy)
         return False
 
     def labelFinished(self, lab, pkglab, status, *args, **kwargs):
         if status=='success':
-            lab.label_set('OK')
+            lab.label_set(_("OK"))
         elif status=='failed':
-            lab.label_set('FAIL')
+            lab.label_set(_("FAIL"))
         else:
-            lab.label_set('???')
+            lab.label_set(_("???"))
             print status
         lab.color_set(255, 255, 255, 255)
         if pkglab:
@@ -404,7 +410,7 @@ class SHRInstallerGUI():
         #print str(remain) + ' seconds left'
         if kwargs.get('remaining'):
             if remain!=0 or pro==100:
-                kwargs['remaining'].label_set(str(remain) + ' seconds left')
+                kwargs['remaining'].label_set(str(remain) + _(" seconds left"))
 
     def cancel(self, transaction, *args, **kwargs):
         self.installer.cancel(transaction)
@@ -416,7 +422,7 @@ class SHRInstallerGUI():
             if obj.state_get():
                 selected = True
         except:
-            print "something went wrong"
+            print _("something went wrong")
 
         if not selected:
             for info in togglelist:
@@ -425,7 +431,7 @@ class SHRInstallerGUI():
                     break
         if selected:
             if not self.selected:
-                self.bar.push('Next', 'Back', partial(callback, togglelist), self.back)
+                self.bar.push(_("Next"), _("Back"), partial(callback, togglelist), self.back)
             self.selected = True
         else:
             self.bar.pop()
@@ -476,7 +482,7 @@ class SHRInstallerGUI():
         animbox.show()
 
         la = elementary.Label(animbox)
-        la.label_set('Installing selected packages')
+        la.label_set(_("Installing selected packages"))
         la.show()
 
         animbox.pack_start(la)
@@ -496,8 +502,8 @@ class SHRInstallerGUI():
 
         self.pager.content_push(box)
         self.startAnimation(animbox)
-        self.bar.push('Next', 'Back', None, self.back2)
-        self.bar.push('Next', 'Cancel', None, None)
+        self.bar.push(_("Next"), _("Back"), None, self.back2)
+        self.bar.push(_("Next"), _("Cancel"), None, None)
 
 
     def removeSelected(self, togglelist, *args, **kwargs):
@@ -517,7 +523,7 @@ class SHRInstallerGUI():
         animbox.show()
 
         la = elementary.Label(animbox)
-        la.label_set('Removing selected packages')
+        la.label_set(_("Removing selected packages"))
         la.show()
 
         animbox.pack_start(la)
@@ -537,8 +543,8 @@ class SHRInstallerGUI():
 
         self.pager.content_push(box)
         self.startAnimation(animbox)
-        self.bar.push('Next', 'Back', None, self.back2)
-        self.bar.push('Next', 'Cancel', None, None)
+        self.bar.push(_("Next"), _("Back"), None, self.back2)
+        self.bar.push(_("Next"), _("Cancel"), None, None)
 
     def install(self, *args, **kwargs):
         list = elementary.List(self.pager)
@@ -559,10 +565,10 @@ class SHRInstallerGUI():
         entry.scale_set(3.0)
         entryscr.content_set(entry)
         
-        self.Dialog(self.win, 'Enter package name:', widgets=[entryscr], button=True, button_callback=partial(self.installList, list, togglelist, entry))
+        self.Dialog(self.win, _("Enter package name:"), widgets=[entryscr], button=True, button_callback=partial(self.installList, list, togglelist, entry))
         #entry.focus()
         self.pager.content_push(list)
-        self.bar.push('Next', 'Back', None, self.back)
+        self.bar.push(_("Next"), _("Back"), None, self.back)
 
     def listError(self, dia, x, *args, **kwargs):
         scr = elementary.Scroller(self.win)
@@ -580,19 +586,19 @@ class SHRInstallerGUI():
         scr.show()
         anchor.show()
         dia.delete()
-        self.Dialog(self.win, 'Error: ', widgets=[scr],	button=True, button_callback=self.back)
+        self.Dialog(self.win, _("Error: "), widgets=[scr],	button=True, button_callback=self.back)
 
     def listFinished(self, dia, status, *args, **kwargs):
         dia.delete()
         if status != 'success':
-            self.Dialog(self.win, 'Searching failed.', button=True, button_callback = self.back)
+            self.Dialog(self.win, _("Searching failed."), button=True, button_callback = self.back)
 
     def removeList(self, list, togglelist, entry, *args, **kwargs):
-        dia = self.Dialog(self.win, 'Searching...')
+        dia = self.Dialog(self.win, _("Searching..."))
         self.installer.listPackages('installed', entry.entry_get().replace('<br>',''), package_handler=partial(self.handlePackage, list, togglelist, self.removeSelected), finished_handler=partial(self.listFinished, dia), error_handler=partial(self.listError, dia))
 
     def installList(self, list, togglelist, entry, *args, **kwargs):
-        dia = self.Dialog(self.win, 'Searching...')
+        dia = self.Dialog(self.win, _("Searching..."))
         self.installer.listPackages('~installed', entry.entry_get().replace('<br>',''), package_handler=partial(self.handlePackage, list, togglelist, self.installSelected), finished_handler=partial(self.listFinished, dia), error_handler=partial(self.listError, dia))
 
     def remove(self, *args, **kwargs):
@@ -627,9 +633,9 @@ class SHRInstallerGUI():
         togglelist = {}
         list.go()
 #        self.installer.listUpgradable(package_handler=partial(self.handlePackage, list, togglelist, self.upgradeSelected))
-        self.Dialog(self.win, 'Not implemented yet.', button=True, button_callback = self.back)
+        self.Dialog(self.win, _("Not implemented yet."), button=True, button_callback = self.back)
         self.pager.content_push(list)
-        self.bar.push('Next', 'Back', None, self.back)  
+        self.bar.push(_("Next"), _("Back"), None, self.back)  
 
     def update(self, *args, **kwargs):
         box = elementary.Box(self.pager)
@@ -640,7 +646,7 @@ class SHRInstallerGUI():
         animbox.show()
 
         la = elementary.Label(animbox)
-        la.label_set('Refreshing package list')
+        la.label_set(_("Refreshing package list"))
         la.show()
 
         animbox.pack_start(la)
@@ -659,8 +665,8 @@ class SHRInstallerGUI():
         trans = self.installer.update(finished_handler=partial(self.labelFinished, lab, None), progress_handler=partial(self.labelProgress, lab))
         self.pager.content_push(box)
         self.startAnimation(animbox)
-        self.bar.push('Next', 'Back', None, self.back)
-        self.bar.push('Next', 'Cancel', None, None)
+        self.bar.push(_("Next"), _("Back"), None, self.back)
+        self.bar.push(_("Next"), _("Cancel"), None, None)
 
     def back(self, *args, **kwargs):
         if self.selected:
@@ -677,13 +683,13 @@ class SHRInstallerGUI():
         anchorview.text_set(text)
         anchorview.show()
         self.pager.content_push(anchorview)
-        self.bar.push('Next', 'Back', None, self.back)
+        self.bar.push(_("Next"), _("Back"), None, self.back)
 
     def menu(self):
         box = elementary.Box(self.pager)
         fr = elementary.Frame(box)
         lab = elementary.Label(fr)#change to AnchorBlock
-        lab.label_set('Select action from list below:')
+        lab.label_set(_("Select action from list below:"))
 
         lab.show()
         labox = elementary.Box(fr)
@@ -705,10 +711,10 @@ class SHRInstallerGUI():
         box.pack_end(list)
         box.show()
 
-        items = [('Install new packages',None, None, self.install),
-                 ('Upgrade system', None, None, self.upgrade),
-                 ('Update package cache', None, None, self.update),
-                 ('Remove packages', None, None, self.remove)]
+        items = [(_("Install new packages"),None, None, self.install),
+                 (_("Upgrade system"), None, None, self.upgrade),
+                 (_("Update package cache"), None, None, self.update),
+                 (_("Remove packages"), None, None, self.remove)]
 
         for item in items:
             list.item_append(item[0], item[1], item[2], item[3])
@@ -718,7 +724,7 @@ class SHRInstallerGUI():
         list.go()
 
     def main(self):
-        self.win.title_set('Installer')
+        self.win.title_set(_("Installer"))
         self.win.destroy = self.destroy
         bg = elementary.Background(self.win)
         self.win.resize_object_add(bg)
@@ -738,7 +744,7 @@ class SHRInstallerGUI():
         self.win.resize_object_add(box)
         self.menu()
 
-        inwin = self.Dialog(self.win, 'Connecting to PackageKit...')
+        inwin = self.Dialog(self.win, _("Connecting to PackageKit..."))
 
         ecore.idler_add(partial(self.connect, inwin))
 
@@ -746,7 +752,7 @@ class SHRInstallerGUI():
 
 if __name__ == "__main__":
 
-    print "SHR Installer"
+    print _("SHR Installer")
 
     ui = SHRInstallerGUI(SHRInstaller)
     ui.main()
