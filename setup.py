@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sys
 import os
 
@@ -20,6 +21,7 @@ dist = setup( name='shr-installer',
     license='GNU GPL',
     scripts=['shr-installer'],
     data_files=[('pixmaps', ['data/shr-installer.png']),
+		('locale/de/LC_MESSAGES', ['data/po/de/shr-installer.mo']),
 		('pixmaps/shr-installer' , glob("data/icons/*.png")),
 		('applications', ['data/shr-installer.desktop'])]
 )
