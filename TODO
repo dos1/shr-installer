@@ -1,7 +1,7 @@
 * upgrading
+* advanced funcions (whatprovides, whatdepends etc.)
 * don't display upgradable packages in "Install new packages" view
-* look at integrating with webservices about package rating, categories, screenshots and descriptions
+* integration with showroom
 
 Bugs in opkg PackageKit backend to fix:
-* upgrading
-* installing/removing multiple packages at once
+* list_upgradable

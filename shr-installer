@@ -213,21 +213,22 @@ class SHRInstallerGUI():
             else:
                 lab = elementary.Label(self)
                 lab.label_set(label)
+                lab.size_hint_align_set(0.5, 0.5)
                 lab.show()
                 fr = elementary.Frame(self)
                 fr.style_set('outdent_top')
-                fr2 = elementary.Frame(self)
-                fr2.style_set('pad_small')
+#                fr2 = elementary.Frame(self)
+#                fr2.style_set('pad_small')
                 btn = elementary.Frame(self)
                 btn.style_set('outdent_bottom')
                 box = elementary.Box(btn)
                 box.pack_end(lab)
                 box.show()
-                fr2.content_set(box)
-                fr.content_set(fr2)
+#                fr2.content_set(box)
+                fr.content_set(box)
                 btn.content_set(fr)
                 fr.show()
-                fr2.show()
+#                fr2.show()
                 btn.show()
             btn.size_hint_weight_set(-1.0, -1.0)
             return btn
@@ -322,9 +323,7 @@ class SHRInstallerGUI():
         mainloop = e_dbus.DBusEcoreMainLoop()
         self.bus = dbus.SystemBus(mainloop=mainloop)
         self.installer = installer(self.bus, len(argv)==2) # FIXME
-        elementary.init()  
-        # elementary configuration
-        elementary.c_elementary.finger_size_set(95)
+        elementary.init()
         self.win = elementary.Window('shr-installer', elementary.ELM_WIN_BASIC)
         self.pager = elementary.Pager(self.win)
         self.bar = self.Bar(self.win)
@@ -637,6 +636,12 @@ class SHRInstallerGUI():
         self.pager.content_push(list)
         self.bar.push(_("Next"), _("Back"), None, self.back)  
 
+    def browse(self, *args, **kargs):
+        self.Dialog(self.win, _("Not implemented yet."), button=True)
+
+    def advanced(self, *args, **kargs):
+        self.Dialog(self.win, _("Not implemented yet."), button=True)
+
     def update(self, *args, **kwargs):
         box = elementary.Box(self.pager)
         box.show()
@@ -711,9 +716,11 @@ class SHRInstallerGUI():
         box.pack_end(list)
         box.show()
 
-        items = [(_("Install new packages"),None, None, self.install),
-                 (_("Upgrade system"), None, None, self.upgrade),
+        items = [(_("Browse repository"), None, None, self.browse),
                  (_("Update package cache"), None, None, self.update),
+                 (_("Upgrade system"), None, None, self.upgrade),
+                 (_("Install new packages"),None, None, self.install),
+                 (_("Advanced functions"), None, None, self.advanced),
                  (_("Remove packages"), None, None, self.remove)]
 
         for item in items:
