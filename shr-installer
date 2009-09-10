@@ -387,6 +387,7 @@ class SHRInstallerGUI():
         return False
 
     def labelFinished(self, lab, pkglab, status, *args, **kwargs):
+        lab.show()
         if status=='success':
             lab.label_set(_("OK"))
         elif status=='failed':
@@ -406,6 +407,9 @@ class SHRInstallerGUI():
         if pro!=101:
             lab.label_set(str(pro) + '%')
             lab.color_set(255, 255, 255, (pro*2)+55 )
+            lab.show()
+        else:
+            lab.hide()
         #print str(remain) + ' seconds left'
         if kwargs.get('remaining'):
             if remain!=0 or pro==100:
