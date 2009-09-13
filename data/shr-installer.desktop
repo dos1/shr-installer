@@ -2,6 +2,7 @@
 Version=1.0
 Encoding=UTF-8
 Name=Installer
+Name[fr]=Installation
 Name[pl]=Instalator
 TryExec=shr-installer
 GenericName=SHR Installer

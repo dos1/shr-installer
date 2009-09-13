@@ -22,6 +22,7 @@ dist = setup( name='shr-installer',
     scripts=['shr-installer'],
     data_files=[('pixmaps', ['data/shr-installer.png']),
 		('locale/de/LC_MESSAGES', ['data/po/de/shr-installer.mo']),
+		('locale/fr/LC_MESSAGES', ['data/po/fr/shr-installer.mo']),
 		('pixmaps/shr-installer' , glob("data/icons/*.png")),
 		('applications', ['data/shr-installer.desktop'])]
 )
