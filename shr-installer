@@ -640,9 +640,6 @@ class SHRInstallerGUI():
         self.pager.content_push(list)
         self.bar.push(_("Next"), _("Back"), None, self.back)  
 
-    def browse(self, *args, **kargs):
-        self.Dialog(self.win, _("Not implemented yet."), button=True)
-
     def advanced(self, *args, **kargs):
         self.Dialog(self.win, _("Not implemented yet."), button=True)
 
@@ -720,10 +717,9 @@ class SHRInstallerGUI():
         box.pack_end(list)
         box.show()
 
-        items = [(_("Browse repository"), None, None, self.browse),
+        items = [(_("Install new packages"), None, None, self.install),
                  (_("Update package cache"), None, None, self.update),
                  (_("Upgrade system"), None, None, self.upgrade),
-                 (_("Install new packages"),None, None, self.install),
                  (_("Advanced functions"), None, None, self.advanced),
                  (_("Remove packages"), None, None, self.remove)]
 

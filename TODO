@@ -2,7 +2,9 @@
 * advanced funcions (whatprovides, whatdepends etc.)
 * don't display upgradable packages in "Install new packages" view
 * integration with showroom
-* better UI
+* add some icons
+* implement options
+* About window
 
 Bugs in opkg PackageKit backend to fix:
 * list_upgradable
