@@ -208,7 +208,7 @@ class SHRInstallerGUI():
             if callback:
                 btn = elementary.Button(self)
                 btn.label_set(label)
-                btn.clicked = callback
+                btn._callback_add('clicked', callback)
                 btn.show()
             else:
                 lab = elementary.Label(self)
@@ -302,7 +302,7 @@ class SHRInstallerGUI():
                 btn.size_hint_align_set(-1.0, 0.0)
                 btn.label_set('OK')
                 btn.show()
-                btn.clicked = self.close
+                btn._callback_add('clicked', self.close)
                 box.pack_end(btn)
 
             self.content_set(box)
@@ -732,7 +732,7 @@ class SHRInstallerGUI():
 
     def main(self):
         self.win.title_set(_("Installer"))
-        self.win.destroy = self.destroy
+        self.win.callback_destroy_add(self.destroy)
         bg = elementary.Background(self.win)
         self.win.resize_object_add(bg)
         bg.show()
