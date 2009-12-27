@@ -1,0 +1,117 @@
+# David Garabana Barro <david@garabana.com>, 2009.
+msgid ""
+msgstr ""
+"Project-Id-Version: shr-installer\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-27 15:49+0200\n"
+"PO-Revision-Date: 2009-12-19 02:59+0100\n"
+"Last-Translator: David Garabana Barro <david@garabana.com>\n"
+"Language-Team: Galician <>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-Country: FRANCE\n"
+"X-Generator: Lokalize 1.0\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+msgid "Trying again..."
+msgstr "Probando de nuevo..."
+
+msgid "Couldn't connect to PackageKit"
+msgstr "No se pudo conectar a PackageKit"
+
+msgid "Not connected to PackageKit!"
+msgstr "¡Sin conexión con PackageKit!"
+
+msgid "Bye PackageKit!"
+msgstr "¡Adiós, PackageKit !"
+
+msgid "Bye!"
+msgstr "¡Hasta luego!"
+
+msgid "Next"
+msgstr "Siguiente"
+
+msgid "Back"
+msgstr "Volver"
+
+msgid "Options"
+msgstr "Opciones"
+
+msgid "About"
+msgstr "Acerca de"
+
+msgid "Could not connect to PackageKit. Aborting."
+msgstr "No se pudo conectar con PackageKit. Abortando."
+
+msgid "Quit"
+msgstr "Salir"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "FAIL"
+msgstr "FALLO"
+
+msgid "???"
+msgstr "???"
+
+msgid " seconds left"
+msgstr " segundos restantes"
+
+msgid "something went wrong"
+msgstr "algo ha ido mal"
+
+msgid "Installing selected packages"
+msgstr "Instalando los paquetes seleccionados"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Removing selected packages"
+msgstr "Desinstalando los paquetes seleccionados"
+
+msgid "Enter package name:"
+msgstr "Introduzca el nombre del paquete:"
+
+msgid "Error: "
+msgstr "Error: "
+
+msgid "Searching failed."
+msgstr "Falló la búsqueda."
+
+msgid "Searching..."
+msgstr "Buscando..."
+
+msgid "Not implemented yet."
+msgstr "Aún no está implementado."
+
+msgid "Refreshing package list"
+msgstr "Actualizando la lista de paquetes"
+
+msgid "Select action from list below:"
+msgstr "Seleccione una acción de la lista:"
+
+msgid "Install new packages"
+msgstr "Instalando paquetes nuevos"
+
+msgid "Upgrade system"
+msgstr "Actualizar el sistema"
+
+msgid "Update package cache"
+msgstr "Actualizar la lista de paquetes"
+
+msgid "Remove packages"
+msgstr "Desinstalar paquetes"
+
+msgid "Installer"
+msgstr "Instalador"
+
+msgid "Connecting to PackageKit..."
+msgstr "Conectando a PackageKit..."
+
+msgid "SHR Installer"
+msgstr "Instalador de SHR"
+
+
