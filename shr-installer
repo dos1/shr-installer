@@ -459,11 +459,6 @@ class SHRInstallerGUI():
         list.item_append(name, toggle, None, None)
         list.go()
 
-    def installSelected(self, togglelist, *args, **kwargs):
-        for info in togglelist:
-            if togglelist[info].state_get():
-                print info
-
     def back2(self, *args, **kwargs):
         self.back()
         self.back()
@@ -627,16 +622,14 @@ class SHRInstallerGUI():
         self.pager.content_push(list)
         self.bar.push('Next', 'Back', None, self.back)
 
-    def upgradeSelected(self, *args, **kwargs):
-        pass
-
     def upgrade(self, *args, **kwargs):
         list = elementary.List(self.pager)
         list.show()
         togglelist = {}
         list.go()
-#        self.installer.listUpgradable(package_handler=partial(self.handlePackage, list, togglelist, self.upgradeSelected))
-        self.Dialog(self.win, _("Not implemented yet."), button=True, button_callback = self.back)
+        dia = self.Dialog(self.win, _("Searching..."))
+        self.installer.listUpgradable(package_handler=partial(self.handlePackage, list, togglelist, self.installSelected), finished_handler=partial(self.listFinished, dia), error_handler=partial(self.listError, dia))
+        #self.Dialog(self.win, _("Not implemented yet."), button=True, button_callback = self.back)
         self.pager.content_push(list)
         self.bar.push(_("Next"), _("Back"), None, self.back)  
 
@@ -734,6 +727,7 @@ class SHRInstallerGUI():
         self.win.title_set(_("Installer"))
         self.win.callback_destroy_add(self.destroy)
         bg = elementary.Background(self.win)
+        bg.size_hint_min_set(480,600)
         self.win.resize_object_add(bg)
         bg.show()
 
