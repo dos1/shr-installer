@@ -1,0 +1,116 @@
+## SOME DESCRIPTIVE TITLE.
+# This file is put in the public domain.
+# FIRST AUTHOR kristofc97@gmail.com, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-08-12 15:49+0200\n"
+"PO-Revision-Date: 2012-08-13 12:21+0100\n"
+"Last-Translator: Kryštof Celba <kristofc97@gmail.com>\n"
+"Language-Team: Czech <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Trying again..."
+msgstr "Zkouším znovu..."
+
+msgid "Couldn't connect to PackageKit"
+msgstr "Nelze se připojit k PackageKit"
+
+msgid "Not connected to PackageKit!"
+msgstr "Nejsem připojen k PackageKit!"
+
+msgid "Bye PackageKit!"
+msgstr "Sbohem PackageKit!"
+
+msgid "Bye!"
+msgstr "Sbohem!"
+
+msgid "Next"
+msgstr "Další"
+
+msgid "Back"
+msgstr "Zpět"
+
+msgid "Options"
+msgstr "Možnosti"
+
+msgid "About"
+msgstr "O aplikaci"
+
+msgid "Could not connect to PackageKit. Aborting."
+msgstr "Nelze se připojit k PackageKit. Končím."
+
+msgid "Quit"
+msgstr "Ukončit"
+
+msgid "OK"
+msgstr "Ok"
+
+msgid "FAIL"
+msgstr "CHYBA"
+
+msgid "???"
+msgstr "???"
+
+msgid " seconds left"
+msgstr " zbývající čas [s]"
+
+msgid "something went wrong"
+msgstr "Něco se pokazilo"
+
+msgid "Installing selected packages"
+msgstr "Instalování vybraných balíčků"
+
+msgid "Cancel"
+msgstr "Zrušit"
+
+msgid "Removing selected packages"
+msgstr "Mazání vybraných balíčků"
+
+msgid "Enter package name:"
+msgstr "Napište jméno balíčku:"
+
+msgid "Error: "
+msgstr "Chyba: "
+
+msgid "Searching failed."
+msgstr "Vyhledávání se nezdařilo."
+
+msgid "Searching..."
+msgstr "Vyhledávání..."
+
+msgid "Not implemented yet."
+msgstr "Zatím není implementováno."
+
+msgid "Refreshing package list"
+msgstr "Obnovování seznamu balíčků"
+
+msgid "Select action from list below:"
+msgstr "Vyberte akci ze seznamu:"
+
+msgid "Install new packages"
+msgstr "Instalovat nové balíčky"
+
+msgid "Upgrade system"
+msgstr "Aktualizovat systém"
+
+msgid "Update package cache"
+msgstr "Aktualizovat vyrovnávací paměť balíčků"
+
+msgid "Remove packages"
+msgstr "Smazat balíčky"
+
+msgid "Installer"
+msgstr "Instalátor"
+
+msgid "Connecting to PackageKit..."
+msgstr "Připojování k PackageKit..."
+
+msgid "SHR Installer"
+msgstr "SHR Instalátor"
+
+
